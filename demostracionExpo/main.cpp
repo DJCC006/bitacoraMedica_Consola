@@ -42,7 +42,10 @@ struct Paciente{
     string antMedicos;//Antecedentes medicos
 
     //vector que guarda todos los chequeos del paciente
-    std::vector<Chequeo> expediente;
+    //std::vector<Chequeo> expediente;
+    int contador;
+    int MAX;
+    Chequeo * expediente = new Chequeo[MAX];
 };
 
 
@@ -50,14 +53,14 @@ struct Paciente{
 
 //Prototipado de funciones
 void agregarPaciente(Paciente* lista, int &contador, int TAM);
-void crearChequeo(const Paciente* paciente, int index);
+void crearChequeo( Paciente* paciente, int index);
 void showMenuPrincipal();
 int validarEntero(string mensaje);
 void listarPacientes(const Paciente* lista, int contador);
-void showExpedientes( const Paciente* lista, int index);
+void showExpedientes( const Paciente &paciente, int contador);
 void ordenarPacientes(Paciente* lista, int TAM);
 int buscarPorDNI(const Paciente* lista, int TAM, int IDBuscado);
-
+void cerrarExpedientes(Paciente* lista, int contador);
 
 int main()
 {
@@ -105,12 +108,14 @@ int main()
                 cin>>dniBuscado;
                 int index = buscarPorDNI(listaPacientes, TAM, dniBuscado);
                 cout<<"index: "<<index<<endl;
-                showExpedientes(listaPacientes, index);
+                Paciente pass = listaPacientes[index];
+                showExpedientes(pass, pass.contador);
                 break;
             }
 
             case 5:{
                 cout<<"\nCerrando Sesion..."<<endl;
+                cerrarExpedientes(listaPacientes, contador);
                 delete[] listaPacientes;
                 listaPacientes=nullptr;
                 break;
@@ -151,6 +156,8 @@ void agregarPaciente(Paciente* lista, int &contador, int TAM){
         // getline(cin, newPaciente.antMedicos);
 
         //agregamos nuevo paciente
+        newPaciente.contador=0;
+        newPaciente.MAX=5;
         lista[contador]= newPaciente;
         contador++;
 
@@ -162,9 +169,9 @@ void agregarPaciente(Paciente* lista, int &contador, int TAM){
 
 
 
-void crearChequeo(const Paciente* lista, int index){
+void crearChequeo(Paciente* lista, int index){
 
-    Paciente pacienteAdd = lista[index];
+    Paciente& pacienteAdd = lista[index];
 
 
     Chequeo newCheck;
@@ -202,14 +209,15 @@ void crearChequeo(const Paciente* lista, int index){
 
 
     //Registramos codigo de chequeo
-    pacienteAdd.expediente.push_back(newCheck);
-    int idChequeo= pacienteAdd.expediente.size();
-    newCheck.idExpediente=idChequeo;
-
+    //pacienteAdd.expediente.push_back(newCheck);
+    //int idChequeo= pacienteAdd.expediente.size();
+    newCheck.idExpediente=pacienteAdd.contador+1;
+    pacienteAdd.expediente[pacienteAdd.contador]=newCheck;
+    pacienteAdd.contador++;
     //agregamos el nuevo chequeo al expediente del paciente
 
 
-    cout<<"TOTAL: "<<pacienteAdd.expediente.size();
+    //cout<<"TOTAL: "<<pacienteAdd.expediente.size();
     cout<<">>Chequeo Registrado Exitosamente"<<endl;
 }
 
@@ -253,20 +261,20 @@ void listarPacientes(const Paciente* lista,int contador){
 }
 
 
-void showExpedientes(const Paciente* lista, int index){
-    Paciente actualPaciente= lista[index];
+void showExpedientes(const Paciente &paciente, int contador){
+    //Paciente actualPaciente= lista[index];
     //std::vector<Chequeo> actual = actualPaciente.expediente;
-    int totalExpediente = actualPaciente.expediente.size();
+    //int totalExpediente = paciente.contador+1;
 
-    cout<<"total: "<<totalExpediente<<endl;
+   // cout<<"total: "<<totalExpediente<<endl;
     //heading
     cout<<"\nCODIGO      FECHA      MOTIVO      "<<endl;
     cout<<"--------------------------------------"<<endl;
-    for(int i=0; i<totalExpediente; i++){
-       // Chequeo check= actualPaciente.expediente.at(i);
-        cout<<actualPaciente.expediente.at(i).idExpediente;
-        cout<<setw(10)<<actualPaciente.expediente.at(i).fecha;
-        cout<<setw(10)<<actualPaciente.expediente.at(i).motConsulta<<endl;
+    for(int i=0; i<paciente.MAX; i++){
+        Chequeo check= paciente.expediente[i];
+        cout<<check.idExpediente;
+        cout<<setw(18)<<check.fecha;
+        cout<<setw(18)<<check.motConsulta<<endl;
         cout<<"--------------------------------------"<<endl;
     }
 
@@ -307,4 +315,13 @@ int buscarPorDNI(const Paciente* lista, int TAM, int IDBuscado){
         }
     }
     return -1;
+}
+
+
+//Metodo utilizado para cerrar los recursos de los arreglos de expedientes para cada paciente
+void cerrarExpedientes(Paciente* lista, int contador){
+    for(int i=0; i<contador; i++){
+        delete[] lista[i].expediente;
+        lista[i].expediente=nullptr;
+    }
 }
