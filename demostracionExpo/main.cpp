@@ -61,6 +61,9 @@ void showExpedientes( const Paciente &paciente, int contador);
 void ordenarPacientes(Paciente* lista, int TAM);
 int buscarPorDNI(const Paciente* lista, int TAM, int IDBuscado);
 void cerrarExpedientes(Paciente* lista, int contador);
+int buscarExpediente(const Chequeo* expediente, int TAM, int code);
+void showInfoChequeo(const Chequeo* expediente, int index);
+void previewPacientes(const Paciente* lista,int contador);
 
 int main()
 {
@@ -104,12 +107,18 @@ int main()
 
             case 4:{
                 int dniBuscado=0;
+                int expBuscado=0;
+                previewPacientes(listaPacientes, contador);
                 cout<<"\nIngrese el DNI de paciente: ";
                 cin>>dniBuscado;
                 int index = buscarPorDNI(listaPacientes, TAM, dniBuscado);
                 cout<<"index: "<<index<<endl;
                 Paciente pass = listaPacientes[index];
                 showExpedientes(pass, pass.contador);
+
+                expBuscado=validarEntero("Ingrese el codigo del expediente a visualizar: ");
+                int indexE= buscarExpediente(pass.expediente,pass.contador, expBuscado);
+                showInfoChequeo(pass.expediente,indexE);
                 break;
             }
 
@@ -268,14 +277,15 @@ void showExpedientes(const Paciente &paciente, int contador){
 
    // cout<<"total: "<<totalExpediente<<endl;
     //heading
-    cout<<"\nCODIGO      FECHA      MOTIVO      "<<endl;
-    cout<<"--------------------------------------"<<endl;
-    for(int i=0; i<paciente.MAX; i++){
+    cout<<"------EXPEDIENTE DE PACIENTE-----"<<endl;
+    cout<<"\nCODIGO      FECHA        MOTIVO      "<<endl;
+    cout<<"----------------------------------------"<<endl;
+    for(int i=0; i<paciente.contador; i++){
         Chequeo check= paciente.expediente[i];
         cout<<check.idExpediente;
         cout<<setw(18)<<check.fecha;
-        cout<<setw(18)<<check.motConsulta<<endl;
-        cout<<"--------------------------------------"<<endl;
+        cout<<setw(20)<<check.motConsulta<<endl;
+        cout<<"----------------------------------------"<<endl;
     }
 
 }
@@ -317,6 +327,49 @@ int buscarPorDNI(const Paciente* lista, int TAM, int IDBuscado){
     return -1;
 }
 
+
+
+int buscarExpediente(const Chequeo* expediente, int TAM, int code){
+    for(int i=0; i<TAM; i++){
+        if(expediente[i].idExpediente==code){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+void previewPacientes(const Paciente* lista,int contador){
+    //heading
+    cout<<"\nDNI         NOMBRE      APELLIDO"<<endl;
+    cout<<"-----------------------------------"<<endl;
+
+    //iteracion
+    for(int i=0; i<contador; i++){
+        cout<<lista[i].dni;
+        cout<<setw(10)<<lista[i].nombre;
+        cout<<setw(14)<<lista[i].apellido<<endl;
+        cout<<"-----------------------------------"<<endl;
+    }
+}
+
+
+void showInfoChequeo(const Chequeo* expediente, int index){
+    cout<<"\n---DETALLES DE EXPEDIENTE---"<<endl;
+    cout<<"\n--Registro de Signos Vitales--"<<endl;
+    cout<<"Presión Arterial: "<<expediente[index].presionA<<" mmHg"<<endl;
+    cout<<"Frecuencia Cardiaca: "<<expediente[index].frecCardiac<<" lpm"<<endl;
+    cout<<"Temperatura: "<<expediente[index].temp<<" °C"<<endl;
+    cout<<"Saturación de Oxígeno: "<<expediente[index].frecCardiac<<" %"<<endl;
+    cout<<"Peso: "<<expediente[index].frecCardiac<<" kg"<<endl;
+
+    cout<<"\n--DATOS DE CONSULTA--"<<endl;
+    cout<<"Motivo de Consulta: "<<expediente[index].motConsulta<<endl;
+    cout<<"Sintomatología: "<<expediente[index].sintomatologia<<endl;
+    cout<<"Diagnóstico: "<<expediente[index].diagnostico<<endl;
+    cout<<"Tratamiento: "<<expediente[index].tratamiento<<endl;
+}
 
 //Metodo utilizado para cerrar los recursos de los arreglos de expedientes para cada paciente
 void cerrarExpedientes(Paciente* lista, int contador){
