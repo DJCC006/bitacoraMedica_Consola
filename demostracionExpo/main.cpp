@@ -32,7 +32,7 @@ struct Chequeo{
 
 
 struct Paciente{
-    unsigned int dni;
+    unsigned long long int dni;
     int edad;
     int telefono;
     char genero;
@@ -57,16 +57,15 @@ struct Paciente{
 //Prototipado de funciones
 void agregarPaciente(Paciente* lista, int &contador, int TAM);
 void crearChequeo( Paciente* paciente, int index);
-void showMenuPrincipal();
-int validarEntero(string mensaje);
 void listarPacientes(const Paciente* lista, int contador);
 void showExpedientes( const Paciente &paciente, int contador);
 void ordenarPacientes(Paciente* lista, int TAM);
 int buscarPorDNI(const Paciente* lista, int TAM, int IDBuscado);
-void cerrarExpedientes(Paciente* lista, int contador);
 int buscarExpediente(std::vector<Chequeo> expediente, int TAM, int code);
 void showInfoChequeo(std::vector<Chequeo> expediente, int index);
 void previewPacientes(const Paciente* lista,int contador);
+void showMenuPrincipal();
+int validarEntero(string mensaje);
 
 int main()
 {
@@ -84,7 +83,6 @@ int main()
         switch(opcion){
             case 1:{
                 agregarPaciente(listaPacientes, contador, TAM);
-                //ordenarPacientes(listaPacientes, TAM);//ordenado automatico
                 break;
             }
 
@@ -162,7 +160,6 @@ int main()
 
             case 5:{
                 cout<<"\nCerrando Sesion..."<<endl;
-                //cerrarExpedientes(listaPacientes, contador);
                 delete[] listaPacientes;
                 listaPacientes=nullptr;
                 break;
@@ -202,9 +199,6 @@ void agregarPaciente(Paciente* lista, int &contador, int TAM){
         newPaciente.dni=validarEntero("DNI: ");
         cout<<"Tipo de Sangre: ";
         cin>>newPaciente.typeBlood;
-        // cin.clear();
-        // cout<<"Antecedentes Medicos: "; //es decir, si padece ya de otras enfermedades
-        // getline(cin, newPaciente.antMedicos);
 
         //agregamos nuevo paciente
         newPaciente.contador=0;
@@ -262,15 +256,14 @@ void crearChequeo(Paciente* lista, int index){
     //Registramos codigo de chequeo
 
     newCheck.idExpediente=pacienteAdd.contador+1;
-    pacienteAdd.expediente.push_back(newCheck);
-    //int idChequeo= pacienteAdd.expediente.size();
 
-    //pacienteAdd.expediente[pacienteAdd.contador]=newCheck;
+
+    pacienteAdd.expediente.push_back(newCheck);
+
     pacienteAdd.contador++;
     //agregamos el nuevo chequeo al expediente del paciente
 
 
-    //cout<<"TOTAL: "<<pacienteAdd.expediente.size();
     cout<<">>Chequeo Registrado Exitosamente"<<endl;
 }
 
@@ -316,11 +309,6 @@ void listarPacientes(const Paciente* lista,int contador){
 
 
 void showExpedientes(const Paciente &paciente, int contador){
-    //Paciente actualPaciente= lista[index];
-    //std::vector<Chequeo> actual = actualPaciente.expediente;
-    //int totalExpediente = paciente.contador+1;
-
-   // cout<<"total: "<<totalExpediente<<endl;
     //heading
     cout<<"\n------EXPEDIENTE DE PACIENTE-----"<<endl;
     cout<<"CODIGO      FECHA        MOTIVO      "<<endl;
@@ -417,10 +405,4 @@ void showInfoChequeo(std::vector<Chequeo> expediente, int index){
     cout<<"Tratamiento: "<<expediente[index].tratamiento<<endl;
 }
 
-//Metodo utilizado para cerrar los recursos de los arreglos de expedientes para cada paciente
-void cerrarExpedientes(Paciente* lista, int contador){
-    for(int i=0; i<contador; i++){
-        //delete lista[i].expediente;
-        //lista[i].expediente=nullptr;
-    }
-}
+
